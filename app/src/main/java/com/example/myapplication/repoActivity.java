@@ -18,6 +18,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class repoActivity extends AppCompatActivity {
     String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
@@ -26,6 +28,9 @@ public class repoActivity extends AppCompatActivity {
     EditText reponame, repophone, repoemail, repopassword;
     FirebaseAuth mAuth;
     FirebaseUser mUser;
+    FirebaseDatabase rootnode;
+
+    DatabaseReference reference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +60,7 @@ public class repoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 performAuth();
+                performDatabase();
             }
 
             private void performAuth() {
@@ -88,6 +94,17 @@ public class repoActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void performDatabase() {
+          rootnode = FirebaseDatabase.getInstance();
+        reference=rootnode.getReference("Repo");
+        String name=reponame.getText().toString();
+        String email=repoemail.getText().toString();
+        String phone=repophone.getText().toString();
+        String password=repopassword.getText().toString();
+       RepoHelparClass repoHelperClass=new RepoHelparClass( name , phone , email , password );
+        reference.child(name).setValue(repoHelperClass);
     }
 
     private void nextActivity() {

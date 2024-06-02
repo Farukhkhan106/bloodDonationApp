@@ -18,11 +18,16 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class donarActivity extends AppCompatActivity {
     String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
     String PASSWORD_PATTERN = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{6,}$";
     ProgressDialog progressDialog;
+    FirebaseDatabase rootnode;
+
+    DatabaseReference reference;
     EditText donarname, donarphone, donaremail, donarpassword;
     FirebaseAuth mAuth;
     FirebaseUser mUser;
@@ -54,7 +59,9 @@ public class donarActivity extends AppCompatActivity {
         donarbtnreg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 performAuth();
+                performDatabase();
             }
 
             private void performAuth() {
@@ -88,6 +95,18 @@ public class donarActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void performDatabase() {
+        rootnode =FirebaseDatabase.getInstance();
+        reference=rootnode.getReference("Donar");
+        String name=donarname.getText().toString();
+        String email=donaremail.getText().toString();
+        String phone=donarphone.getText().toString();
+        String password=donarpassword.getText().toString();
+       DonarHelperClass donarHelperClass=new DonarHelperClass( name , phone , email , password );
+        reference.child(name).setValue(donarHelperClass);
+
     }
 
     private void nextActivity() {
